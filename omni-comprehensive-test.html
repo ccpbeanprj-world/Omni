@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni System Comprehensive Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .test-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background-color: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        .warning { background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px; }
+        button { padding: 10px 20px; margin: 5px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .status-green { background-color: #28a745; }
+        .status-red { background-color: #dc3545; }
+        .status-yellow { background-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Omni System Comprehensive Test</h1>
+        
+        <div class="test-section">
+            <h2>📊 System Status</h2>
+            <div id="systemStatus">
+                <div class="test-result info">
+                    <span class="status-indicator status-yellow"></span>
+                    <strong>Testing system status...</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="test-section">
+                <h2>🔗 Backend API Tests</h2>
+                <div>
+                    <button onclick="testBackend()">Test Backend</button>
+                    <button onclick="testConversations()">Test Conversations</button>
+                    <button onclick="testMessages()">Test Messages</button>
+                </div>
+                <div id="backendResults"></div>
+            </div>
+            
+            <div class="test-section">
+                <h2>🌐 Frontend Tests</h2>
+                <div>
+                    <button onclick="testFrontend()">Test Frontend</button>
+                    <button onclick="testSocketIO()">Test Socket.IO</button>
+                    <button onclick="testRealTime()">Test Real-time</button>
+                </div>
+                <div id="frontendResults"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔄 LINE Integration Tests</h2>
+            <div>
+                <button onclick="testLineSync()">Test LINE Sync</button>
+                <button onclick="testLineMessages()">Test LINE Messages</button>
+                <button onclick="testLineRealTime()">Test LINE Real-time</button>
+            </div>
+            <div id="lineResults"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📋 Test Results Summary</h2>
+            <div id="summaryResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const backendResults = document.getElementById('backendResults');
+        const frontendResults = document.getElementById('frontendResults');
+        const lineResults = document.getElementById('lineResults');
+        const summaryResults = document.getElementById('summaryResults');
+        const systemStatus = document.getElementById('systemStatus');
+        
+        let testResults = {
+            backend: { passed: 0, failed: 0, tests: [] },
+            frontend: { passed: 0, failed: 0, tests: [] },
+            line: { passed: 0, failed: 0, tests: [] }
+        };
+        
+        function addResult(container, message, type = 'info', category = 'general') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            container.appendChild(div);
+            
+            // Update test results
+            if (type === 'success') {
+                testResults[category].passed++;
+                testResults[category].tests.push({ name: message, status: 'passed' });
+            } else if (type === 'error') {
+                testResults[category].failed++;
+                testResults[category].tests.push({ name: message, status: 'failed' });
+            }
+            
+            updateSummary();
+        }
+
+        async function testBackend() {
+            addResult(backendResults, '<h3>Testing Backend Connection...</h3>', 'info', 'backend');
+            
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                addResult(backendResults, `<strong>✅ Backend Health:</strong><pre>${JSON.stringify(data, null, 2)}</pre>`, 'success', 'backend');
+            } catch (error) {
+                addResult(backendResults, `<strong>❌ Backend Error:</strong><pre>${error.message}</pre>`, 'error', 'backend');
+            }
+        }
+
+        async function testConversations() {
+            addResult(backendResults, '<h3>Testing Conversations API...</h3>', 'info', 'backend');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/conversations');
+                const data = await response.json();
+                addResult(backendResults, `<strong>✅ Conversations:</strong><pre>${JSON.stringify(data, null, 2)}</pre>`, 'success', 'backend');
+            } catch (error) {
+                addResult(backendResults, `<strong>❌ Conversations Error:</strong><pre>${error.message}</pre>`, 'error', 'backend');
+            }
+        }
+
+        async function testMessages() {
+            addResult(backendResults, '<h3>Testing Messages API...</h3>', 'info', 'backend');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/conversations/conv_line_Ud78c6c9edac7c2f989046cf4fccbcff8/messages?limit=5&offset=0&order=ASC');
+                const data = await response.json();
+                addResult(backendResults, `<strong>✅ Messages:</strong><pre>${JSON.stringify(data, null, 2)}</pre>`, 'success', 'backend');
+            } catch (error) {
+                addResult(backendResults, `<strong>❌ Messages Error:</strong><pre>${error.message}</pre>`, 'error', 'backend');
+            }
+        }
+
+        async function testFrontend() {
+            addResult(frontendResults, '<h3>Testing Frontend Connection...</h3>', 'info', 'frontend');
+            
+            try {
+                const response = await fetch('http://localhost:5173');
+                if (response.ok) {
+                    addResult(frontendResults, '<strong>✅ Frontend accessible</strong>', 'success', 'frontend');
+                } else {
+                    addResult(frontendResults, `<strong>❌ Frontend error: ${response.status}</strong>`, 'error', 'frontend');
+                }
+            } catch (error) {
+                addResult(frontendResults, `<strong>❌ Frontend Error:</strong><pre>${error.message}</pre>`, 'error', 'frontend');
+            }
+        }
+
+        async function testSocketIO() {
+            addResult(frontendResults, '<h3>Testing Socket.IO...</h3>', 'info', 'frontend');
+            
+            try {
+                const response = await fetch('http://localhost:3000/socket.io/');
+                addResult(frontendResults, '<strong>✅ Socket.IO endpoint accessible</strong>', 'success', 'frontend');
+            } catch (error) {
+                addResult(frontendResults, `<strong>❌ Socket.IO Error:</strong><pre>${error.message}</pre>`, 'error', 'frontend');
+            }
+        }
+
+        async function testRealTime() {
+            addResult(frontendResults, '<h3>Testing Real-time Messaging...</h3>', 'info', 'frontend');
+            
+            try {
+                // Test sending a message
+                const response = await fetch('http://localhost:3000/api/send-message-to-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        conversationId: 'conv_line_Ud78c6c9edac7c2f989046cf4fccbcff8',
+                        content: 'Test message from comprehensive test',
+                        messageType: 'text'
+                    })
+                });
+                
+                if (response.ok) {
+                    addResult(frontendResults, '<strong>✅ Real-time messaging working</strong>', 'success', 'frontend');
+                } else {
+                    addResult(frontendResults, `<strong>❌ Real-time messaging failed: ${response.status}</strong>`, 'error', 'frontend');
+                }
+            } catch (error) {
+                addResult(frontendResults, `<strong>❌ Real-time Error:</strong><pre>${error.message}</pre>`, 'error', 'frontend');
+            }
+        }
+
+        async function testLineSync() {
+            addResult(lineResults, '<h3>Testing LINE Sync...</h3>', 'info', 'line');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/sync-real-line-history', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(lineResults, `<strong>✅ LINE Sync:</strong><pre>${JSON.stringify(data, null, 2)}</pre>`, 'success', 'line');
+                } else {
+                    addResult(lineResults, `<strong>❌ LINE Sync failed: ${response.status}</strong>`, 'error', 'line');
+                }
+            } catch (error) {
+                addResult(lineResults, `<strong>❌ LINE Sync Error:</strong><pre>${error.message}</pre>`, 'error', 'line');
+            }
+        }
+
+        async function testLineMessages() {
+            addResult(lineResults, '<h3>Testing LINE Messages...</h3>', 'info', 'line');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/conversations/conv_line_Ud78c6c9edac7c2f989046cf4fccbcff8/messages?limit=10&offset=0&order=ASC');
+                const data = await response.json();
+                
+                if (data.success && data.messages.length > 0) {
+                    const firstMsg = data.messages[0];
+                    const lastMsg = data.messages[data.messages.length - 1];
+                    addResult(lineResults, `<strong>✅ LINE Messages:</strong><br>
+                        Total: ${data.messages.length}<br>
+                        First: "${firstMsg.content.substring(0, 50)}..."<br>
+                        Last: "${lastMsg.content.substring(0, 50)}..."<br>
+                        Order: ${new Date(firstMsg.timestamp) < new Date(lastMsg.timestamp) ? 'ASC (oldest first)' : 'DESC (newest first)'}
+                    `, 'success', 'line');
+                } else {
+                    addResult(lineResults, '<strong>❌ No LINE messages found</strong>', 'error', 'line');
+                }
+            } catch (error) {
+                addResult(lineResults, `<strong>❌ LINE Messages Error:</strong><pre>${error.message}</pre>`, 'error', 'line');
+            }
+        }
+
+        async function testLineRealTime() {
+            addResult(lineResults, '<h3>Testing LINE Real-time...</h3>', 'info', 'line');
+            
+            try {
+                // Test receiving a message from LINE user
+                const response = await fetch('http://localhost:3000/api/receive-message-from-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        platform: 'line',
+                        userId: 'Ud78c6c9edac7c2f989046cf4fccbcff8',
+                        message: 'Test real-time message from LINE user',
+                        messageType: 'text'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(lineResults, `<strong>✅ LINE Real-time:</strong><pre>${JSON.stringify(data, null, 2)}</pre>`, 'success', 'line');
+                } else {
+                    addResult(lineResults, `<strong>❌ LINE Real-time failed: ${response.status}</strong>`, 'error', 'line');
+                }
+            } catch (error) {
+                addResult(lineResults, `<strong>❌ LINE Real-time Error:</strong><pre>${error.message}</pre>`, 'error', 'line');
+            }
+        }
+
+        function updateSummary() {
+            const totalPassed = testResults.backend.passed + testResults.frontend.passed + testResults.line.passed;
+            const totalFailed = testResults.backend.failed + testResults.frontend.failed + testResults.line.failed;
+            const totalTests = totalPassed + totalFailed;
+            
+            summaryResults.innerHTML = `
+                <div class="test-result ${totalFailed === 0 ? 'success' : 'warning'}">
+                    <strong>📊 Test Summary:</strong><br>
+                    Total Tests: ${totalTests}<br>
+                    Passed: ${totalPassed} ✅<br>
+                    Failed: ${totalFailed} ❌<br>
+                    Success Rate: ${totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0}%
+                </div>
+            `;
+            
+            // Update system status
+            if (totalFailed === 0 && totalTests > 0) {
+                systemStatus.innerHTML = `
+                    <div class="test-result success">
+                        <span class="status-indicator status-green"></span>
+                        <strong>✅ All systems operational</strong>
+                    </div>
+                `;
+            } else if (totalFailed > 0) {
+                systemStatus.innerHTML = `
+                    <div class="test-result warning">
+                        <span class="status-indicator status-yellow"></span>
+                        <strong>⚠️ Some issues detected (${totalFailed} failures)</strong>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run tests on page load
+        window.onload = function() {
+            setTimeout(() => {
+                testBackend();
+                testConversations();
+                testMessages();
+                testFrontend();
+                testSocketIO();
+                testLineSync();
+                testLineMessages();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

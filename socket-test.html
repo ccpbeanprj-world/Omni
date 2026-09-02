@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Connection Test</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.IO Connection Test</h1>
+    <div id="status">Connecting...</div>
+    <div id="messages"></div>
+    <div id="events"></div>
+
+    <script>
+        console.log('🧪 Starting Socket.IO Connection Test');
+        
+        const socket = io('http://localhost:3000', {
+            transports: ['websocket', 'polling'],
+            autoConnect: true,
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
+
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+        const eventsDiv = document.getElementById('events');
+
+        // Connection events
+        socket.on('connect', () => {
+            console.log('✅ Socket.IO Connected:', socket.id);
+            statusDiv.innerHTML = `✅ Connected (ID: ${socket.id})`;
+            statusDiv.style.color = 'green';
+        });
+
+        socket.on('disconnect', (reason) => {
+            console.log('❌ Socket.IO Disconnected:', reason);
+            statusDiv.innerHTML = `❌ Disconnected: ${reason}`;
+            statusDiv.style.color = 'red';
+        });
+
+        socket.on('connect_error', (error) => {
+            console.log('❌ Socket.IO Connection Error:', error);
+            statusDiv.innerHTML = `❌ Connection Error: ${error.message}`;
+            statusDiv.style.color = 'red';
+        });
+
+        // Message events
+        socket.on('new_message', (data) => {
+            console.log('📨 New Message Received:', data);
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>📨 new_message:</strong> ${data.content} (from ${data.sender_name})`;
+            messageDiv.style.margin = '5px 0';
+            messageDiv.style.padding = '5px';
+            messageDiv.style.border = '1px solid #ccc';
+            messageDiv.style.backgroundColor = '#f0f8ff';
+            messagesDiv.appendChild(messageDiv);
+        });
+
+        socket.on('user_message', (data) => {
+            console.log('👤 User Message Received:', data);
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>👤 user_message:</strong> ${data.content} (from ${data.sender_name})`;
+            messageDiv.style.margin = '5px 0';
+            messageDiv.style.padding = '5px';
+            messageDiv.style.border = '1px solid #ccc';
+            messageDiv.style.backgroundColor = '#f0f0f0';
+            messagesDiv.appendChild(messageDiv);
+        });
+
+        socket.on('real_user_message', (data) => {
+            console.log('🎯 Real User Message Received:', data);
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>🎯 real_user_message:</strong> ${data.content} (from ${data.sender_name})`;
+            messageDiv.style.margin = '5px 0';
+            messageDiv.style.padding = '5px';
+            messageDiv.style.border = '1px solid #ccc';
+            messageDiv.style.backgroundColor = '#fff0f0';
+            messagesDiv.appendChild(messageDiv);
+        });
+
+        socket.on('universal_message', (data) => {
+            console.log('🌐 Universal Message Received:', data);
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>🌐 universal_message:</strong> ${data.content} (from ${data.sender_name})`;
+            messageDiv.style.margin = '5px 0';
+            messageDiv.style.padding = '5px';
+            messageDiv.style.border = '1px solid #ccc';
+            messageDiv.style.backgroundColor = '#f0fff0';
+            messagesDiv.appendChild(messageDiv);
+        });
+
+        socket.on('line_message', (data) => {
+            console.log('📱 LINE Message Received:', data);
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>📱 line_message:</strong> ${data.content} (from ${data.sender_name})`;
+            messageDiv.style.margin = '5px 0';
+            messageDiv.style.padding = '5px';
+            messageDiv.style.border = '1px solid #ccc';
+            messageDiv.style.backgroundColor = '#f0f0ff';
+            messagesDiv.appendChild(messageDiv);
+        });
+
+        // Log all events
+        socket.onAny((eventName, ...args) => {
+            console.log(`🔔 Event Received: ${eventName}`, args);
+            const eventDiv = document.createElement('div');
+            eventDiv.innerHTML = `<strong>🔔 ${eventName}:</strong> ${JSON.stringify(args)}`;
+            eventDiv.style.margin = '2px 0';
+            eventDiv.style.padding = '2px';
+            eventDiv.style.fontSize = '12px';
+            eventDiv.style.color = '#666';
+            eventsDiv.appendChild(eventDiv);
+        });
+
+        // Test function to send a message
+        window.testMessage = function() {
+            console.log('🧪 Testing message sending...');
+            fetch('http://localhost:3000/api/store-user-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    conversationId: 'conv_line_Ud78c6c9edac7c2f989046cf4fccbcff8',
+                    content: `Test message from browser at ${new Date().toISOString()}`,
+                    senderId: 'user_line_Ud78c6c9edac7c2f989046cf4fccbcff8',
+                    senderName: 'Bean Chan'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Test message sent:', data);
+                alert('Test message sent! Check if it appears above.');
+            })
+            .catch(error => {
+                console.error('❌ Test message failed:', error);
+                alert('Test message failed: ' + error.message);
+            });
+        };
+
+        // Add test button
+        const testButton = document.createElement('button');
+        testButton.innerHTML = 'Send Test Message';
+        testButton.onclick = window.testMessage;
+        testButton.style.margin = '10px 0';
+        testButton.style.padding = '10px 20px';
+        testButton.style.fontSize = '16px';
+        testButton.style.backgroundColor = '#007bff';
+        testButton.style.color = 'white';
+        testButton.style.border = 'none';
+        testButton.style.borderRadius = '5px';
+        testButton.style.cursor = 'pointer';
+        document.body.appendChild(testButton);
+
+        console.log('🧪 Socket.IO Test initialized. Connection status will be shown above.');
+        console.log('🧪 Use testMessage() function or click the button to test real-time messages.');
+    </script>
+</body>
+</html>
+

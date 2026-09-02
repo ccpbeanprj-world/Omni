@@ -1,0 +1,55 @@
+# Docker Compose for Omni Channel Platform
+version: '3.8'
+
+services:
+  omni-backend:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - LINE_CHANNEL_ACCESS_TOKEN=${LINE_CHANNEL_ACCESS_TOKEN}
+      - LINE_CHANNEL_SECRET=${LINE_CHANNEL_SECRET}
+      - LINE_CHANNEL_ID=${LINE_CHANNEL_ID}
+      - LINE_WEBHOOK_URL=${LINE_WEBHOOK_URL}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - AI_ENABLED=${AI_ENABLED:-false}
+      - AI_AUTO_REPLY_ENABLED=${AI_AUTO_REPLY_ENABLED:-false}
+      - AI_PROVIDER=${AI_PROVIDER:-stub}
+    volumes:
+      - ./data:/app/data
+      - ./messages.json:/app/messages.json
+      - ./users.json:/app/users.json
+      - ./conversations.json:/app/conversations.json
+    restart: unless-stopped
+    command: npm run backend
+
+  omni-frontend:
+    build: .
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://localhost:3000/api
+    depends_on:
+      - omni-backend
+    restart: unless-stopped
+    command: cd omni-react-app && npm run preview -- --host 0.0.0.0 --port 5173
+
+  # Optional: Add nginx for production
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - omni-backend
+      - omni-frontend
+    restart: unless-stopped
+    profiles:
+      - production
