@@ -47,7 +47,7 @@ Agent types a reply in the dashboard
 
 ## Quick start
 
-**Need:** Node.js **22.23.4 or newer** (21 Oct 2026 security release), npm, a LINE Messaging API channel, and a Twilio WhatsApp sandbox (or live WhatsApp number). This app is Node.js only — it does not run PHP, so the PHP2Shell CVEs do not apply here.
+**Need:** Node.js **22.23.4** (or 24.22.1 / 26.12.1+ on those lines — 21 Oct 2026 security release), npm, a LINE Messaging API channel, and a Twilio WhatsApp sandbox (or live WhatsApp number). This app is Node.js only — PHP2Shell and Oracle Java CVE-2026-91403 do not apply here.
 
 ```bash
 npm run setup

@@ -15,7 +15,7 @@ This guide provides comprehensive testing instructions for the Omni-Channel Plat
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 22.23.4+
+- Node.js 22.23.4 (or 24.22.1 / 26.12.1+)
 - Running Omni server (`npm start`)
 - LINE account (for LINE testing)
 - WhatsApp number (for WhatsApp testing)

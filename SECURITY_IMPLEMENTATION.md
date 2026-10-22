@@ -4,9 +4,21 @@
 
 ## Runtime patches (October 2026)
 
-This project is **Node.js only**. It does **not** ship PHP, so PHP2Shell (CVE-2026-109618 / CVE-2026-109619) does not apply to OmniChat.
+OmniChat is **Node.js only**. It does not ship PHP or Java, so PHP2Shell (CVE-2026-109618 / CVE-2026-109619) and Oracle Java CVE-2026-91403 do not apply.
 
-Run **Node.js 22.23.4, 24.22.1, or 26.12.1** (or newer in those lines). Those releases fix CVE-2026-111497 (Brotli decoder RCE) plus TLS/DNS issues. Node 18 and 20 are EOL and did not get that patch. Docker images in this repo are pinned to `node:22.23.4-alpine`.
+CVE-2026-111497 (Brotli decoder RCE) is fixed only on these **release lines**:
+
+- Node **22.23.4** and later 22.x
+- Node **24.22.1** and later 24.x
+- Node **26.12.1** and later 26.x
+
+Do **not** use `engines`: `>=22.23.4`. That range accepts unpatched 23.x and 24.0–24.22.0 (and 25.x / 26.0–26.12.0). Both `package.json` files use:
+
+```json
+"engines": { "node": "^22.23.4 || ^24.22.1 || ^26.12.1" }
+```
+
+Recommended local/Docker runtime for this repo is **22.23.4** (`.nvmrc`, `node:22.23.4-alpine`). Node 18 and 20 are EOL and did not receive the patch.
 
 Do not add the npm package named `crypto`; Node’s built-in `crypto` module is used for LINE HMAC and encryption.
 
