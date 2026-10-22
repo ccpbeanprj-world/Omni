@@ -2,6 +2,14 @@
 
 > Secrets belong in `.env`. Logs are redacted (`src/config/secrets.js`). Do not print `ENCRYPTION_KEY`. LINE/Twilio keys are required for the inbox; Anthropic is not. Product overview: [README.md](README.md).
 
+## Runtime patches (October 2026)
+
+This project is **Node.js only**. It does **not** ship PHP, so PHP2Shell (CVE-2026-109618 / CVE-2026-109619) does not apply to OmniChat.
+
+Run **Node.js 22.23.4, 24.22.1, or 26.12.1** (or newer in those lines). Those releases fix CVE-2026-111497 (Brotli decoder RCE) plus TLS/DNS issues. Node 18 and 20 are EOL and did not get that patch. Docker images in this repo are pinned to `node:22.23.4-alpine`.
+
+Do not add the npm package named `crypto`; Node’s built-in `crypto` module is used for LINE HMAC and encryption.
+
 ## Overview
 
 This document outlines the comprehensive security measures implemented in the Omni-Channel Platform to address all identified security gaps.

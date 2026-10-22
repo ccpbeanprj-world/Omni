@@ -17,7 +17,7 @@
 ## 🔧 Development Setup
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 22.23.4+ (21 Oct 2026 security release; Node 18/20 are EOL)
 - npm/yarn
 - Git
 - LINE Developer Account (for LINE integration)

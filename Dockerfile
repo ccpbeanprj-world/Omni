@@ -1,5 +1,7 @@
 # Dockerfile for Omni Channel Platform
-FROM node:18-alpine
+# Node 22.23.4+ required (21 Oct 2026 security release: CVE-2026-111497 Brotli RCE, TLS/DNS).
+# Do not use Node 18/20 — those lines are EOL and did not receive that patch.
+FROM node:22.23.4-alpine
 
 # Set working directory
 WORKDIR /app
